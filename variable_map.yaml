@@ -1,0 +1,11 @@
+'tv290C': t  # Temperature for CNV
+'cond0S/m': c  # Conductivity for CNV 
+'timeJV2': time  # Time in Julian Days  for CNV
+'sbeopoxML/L': do  # Dissolved Oxygen (if present)
+'sal00': s  # Salinity (if present)
+'prDM': p  # Pressure (for CNV files, common key)
+'pressure': p  # Pressure (for ASC files)
+'temperature': t  #temperature for ASC files
+'conductivity': c  #Conductivity for ASC files
+'dates' : dates #for ASC files
+'times': time  # Time needs conversion for ASC files
