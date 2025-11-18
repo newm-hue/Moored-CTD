@@ -1,0 +1,18 @@
+temperature:
+  flags:        #flags for individual points [index, flag]
+    - [188, 3]
+
+  ranges:      #flags for ranges [beginning index, end index, flag]
+    - [4060, 4072, 3]
+
+conductivity:
+  flags:
+    - [947, 3]
+  ranges:
+    - [999, 1001, 3]
+pressure:
+  flags:
+    - [947, 3]
+  ranges:
+    - [99, 1001, 3]
+
