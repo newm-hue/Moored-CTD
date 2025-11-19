@@ -60,15 +60,16 @@ elif asc:
 	   skip_blank_lines=True
    )
      raw_keys = ['temperature', 'conductivity', 'pressure', 'dates', 'times']
-elif rsk:
-    rsk_obj = pyrsktools.open(rf'{directory}{filename}')
-    rsk_obj.read(
-        channels=['temperatue','conductivity','pressure']
-    )
-    df = rsk_obj.to_dataframe()
-    df['dates'] = df.index.date
-    df['times'] = df.index.time
-    data = df[['temperature', 'conductivity', 'pressure', 'dates', 'times']]
+     elif rsk:
+     rsk_obj = RSK(rf'{directory}{filename}')
+     rsk_obj.open()
+     rsk_obj.readdata()
+     df = pd.DataFrame(rsk_obj.data)
+     timestamps = df['timestamp']
+     dt_array = pd.to_datetime(df['timestamp'])
+     df['dates'] = dt_array.dt.strftime('%d %b %Y')
+     df['times'] = dt_array.dt.strftime('%H:%M:%S')
+     data = df[['temperature', 'conductivity', 'pressure', 'dates', 'times']]
 
     raw_keys = data.columns.tolist()
 
@@ -105,7 +106,7 @@ for key in raw_keys:
     elif asc:
         raw_ds[safe_key] = ([dim], data[key])
     elif rsk:
-        raw_ds[safe_key] = ([dim], data[key].values)
+        raw_ds[safe_key] = ([dim], data[key].to_numpy())
 
 raw_ds.attrs.update({
     'source_file': filename,
@@ -142,11 +143,11 @@ time = vars_dict.get('time')
 
 #Pressure: for CNV, use index; for ASC, get from vars_dict
 p = data_.index.values if cnv else vars_dict.get('p')
-print("Extracted Pressure Data:", p)
+#print("Extracted Pressure Data:", p)
 
 #entire group below is only for asc files  MN
 # --- Time Conversion for ASC Files ---
-if asc and 'dates' in raw_keys and 'times' in raw_keys:  #added dates MN
+if asc or rsk and 'dates' in raw_keys and 'times' in raw_keys:  #added dates MN
     dates = data_['dates']
     times = data_['times']
 
