@@ -479,10 +479,8 @@ plt.suptitle('Manual Data Inspection with Spike Suggestions')
 plt.savefig(f'{figDir}{figRoot}_ManualSpikeReview.png', dpi=300, bbox_inches='tight')
 plt.show(block=True)
 
-
-##
-#Section 13 Manual data flagging
-#data and flags stored in YAML and read in
+###
+#%%Section 13: Apply WHOCE CTD Flags to variables (flags stored in YAML and read in)
 
 import yaml
 
