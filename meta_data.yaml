@@ -8,7 +8,7 @@ latdeg: 45   #latitude degrees
 latdec: 16.3627  #latitude decimal minutes
 londeg: -66  #longitude degrees east
 londec: 4.0597  #longitude decimal minutes
-directory: "C:/Users/NewhookM/Documents/OPP work/MCTD Processing Python/M2116_FormDragDownstream/Raw/3558/"  #File directory
+directory: "/home/jmm000/DATA/OPPEast/MCTD/BOF_RevFallsDownstream_MCTD_2019/raw/"  #File directory #TODO: Probably remove this from the metadata file
 filename: "DSRF_MidCTD_SBE3558.asc" #Complete filename
 location: "Saint John Harbour"  #Location of instrument deployment
 cruise_name: "Mooring Deployment"

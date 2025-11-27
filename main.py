@@ -27,15 +27,15 @@ filename=meta["filename"]
 directory=meta["directory"]
 
 
-    # Derived values
-    meta["year_1"] = meta["year_n"] + 1
-    meta["year_str"] = str(meta["year_n"])
-    meta["year_2str"] = str(meta["year_n"] - 2000)
-    meta["lat"] = round(meta["latdeg"] + meta["latdec"] / 60, 6)
-    meta["latstr"] = f'{meta["latdeg"]} {meta["latdec"]}'
-    meta["lon"] = round(-(meta["londeg"] + meta["londec"] / 60), 6)
-    meta["lonstr"] = f'{-meta["londeg"]} {meta["londec"]}'
-    meta["dataset_id"] = f'{meta["instrument_type"]}_{meta["cruise_number"]}_{meta["mooring_number"]}_{meta["serial_number"]}_{meta["year_n"]}'
+# Derived values
+meta["year_1"] = meta["year_n"] + 1
+meta["year_str"] = str(meta["year_n"])
+meta["year_2str"] = str(meta["year_n"] - 2000)
+meta["lat"] = round(meta["latdeg"] + meta["latdec"] / 60, 6)
+meta["latstr"] = f'{meta["latdeg"]} {meta["latdec"]}'
+meta["lon"] = round(-(meta["londeg"] + meta["londec"] / 60), 6)
+meta["lonstr"] = f'{-meta["londeg"]} {meta["londec"]}'
+meta["dataset_id"] = f'{meta["instrument_type"]}_{meta["cruise_number"]}_{meta["mooring_number"]}_{meta["serial_number"]}_{meta["year_n"]}'
 
 print("Latitude:", meta["lat"])
 print("Longitude:", meta["lon"])
@@ -51,7 +51,7 @@ if cnv:
     data = ctd.from_cnv(rf'{directory}{filename}')  # Load .cnv data
     raw_keys = data.keys()  # Get column names
 elif asc:
-     data = pd.read_csv(
+    data = pd.read_csv(
 	   rf'{directory}{filename}',
 	   header=None,
 	   names=['temperature', 'conductivity', 'pressure', 'dates', 'times'],
@@ -59,23 +59,23 @@ elif asc:
 	   encoding='utf-8',
 	   skip_blank_lines=True
    )
-     raw_keys = ['temperature', 'conductivity', 'pressure', 'dates', 'times']
-     elif rsk:
-     rsk_obj = RSK(rf'{directory}{filename}')
-     rsk_obj.open()
-     rsk_obj.readdata()
-     df = pd.DataFrame(rsk_obj.data)
-     timestamps = df['timestamp']
-     dt_array = pd.to_datetime(df['timestamp'])
-     df['dates'] = dt_array.dt.strftime('%d %b %Y')
-     df['times'] = dt_array.dt.strftime('%H:%M:%S')
-     data = df[['temperature', 'conductivity', 'pressure', 'dates', 'times']]
+    raw_keys = ['temperature', 'conductivity', 'pressure', 'dates', 'times']
+elif rsk:
+    rsk_obj = RSK(rf'{directory}{filename}')
+    rsk_obj.open()
+    rsk_obj.readdata()
+    df = pd.DataFrame(rsk_obj.data)
+    timestamps = df['timestamp']
+    dt_array = pd.to_datetime(df['timestamp'])
+    df['dates'] = dt_array.dt.strftime('%d %b %Y')
+    df['times'] = dt_array.dt.strftime('%H:%M:%S')
+    data = df[['temperature', 'conductivity', 'pressure', 'dates', 'times']]
 
     raw_keys = data.columns.tolist()
 
 
 
- print(data.head())
+print(data.head())
 
 print("Raw keys:", raw_keys)
 
@@ -123,8 +123,8 @@ print(f"Raw data saved to {raw_output_path}")
 ###
 #%%Section 5: Extract Variables
 import yaml
-    with open("variable_map.yaml","r") as f:
-        var_map = yaml.safe_load(f)
+with open("variable_map.yaml","r") as f:
+    var_map = yaml.safe_load(f)
 
 data_ = data.copy()
 
@@ -152,23 +152,23 @@ if asc or rsk and 'dates' in raw_keys and 'times' in raw_keys:  #added dates MN
     times = data_['times']
 
 
-	datetime_array = np.array([
+datetime_array = np.array([
 		dt.datetime.strptime(f"{str(date).strip()} {str(time_str).strip()}", "%d %b %Y %H:%M:%S")
 		for date, time_str in zip(dates, times)
 	])
 
-  # Extract year from first date    added MN
-    year_n = datetime_array[0].year
+# Extract year from first date    added MN
+year_n = datetime_array[0].year
 
 
-	# Convert to Julian Day   new naming conventions  MN
-	reference_date = dt.datetime(year_n - 1, 12, 31)
-	julian_array = np.array([
+# Convert to Julian Day   new naming conventions  MN
+reference_date = dt.datetime(year_n - 1, 12, 31)
+julian_array = np.array([
     	(dt_obj - reference_date).days + (dt_obj - reference_date).seconds / 86400
    		for dt_obj in datetime_array
 	])
-	#assign time to Julian Day  added MN
-	time=julian_array
+#assign time to Julian Day  added MN
+time=julian_array
 
 print("Available Variables:", available_vars)
 
@@ -207,9 +207,9 @@ if format_time_data:
 
 # Trim time  Unchanged from original code
 if time_trim:
-	time = time[3849:].copy() # check time, p, t, c for proper trim indices
-	print(f'Instrument started (not deployed): {time[0]}')
-	print(f'Instrument stopped (not recovered): {time[-1]}')
+    time = time[3849:].copy() # check time, p, t, c for proper trim indices
+    print(f'Instrument started (not deployed): {time[0]}')
+    print(f'Instrument stopped (not recovered): {time[-1]}')
 
 # Interpolate over spikes
 if time_spike:
@@ -217,9 +217,9 @@ if time_spike:
     print(f'Instrument started (not deployed): {time[0]}, Instrument stopped (not recovered): {time[-1]}')
 
 if UTC_offset:   #unchanged from original script
-	time = time.copy() + dt.timedelta(hours=7)
-	print(f'UTC adjusted instrument started (not deployed): {time[0]}')
-	print(f'UTC adjusted instrument stopped (not recovered): {time[-1]}')
+    time = time.copy() + dt.timedelta(hours=7)
+    print(f'UTC adjusted instrument started (not deployed): {time[0]}')
+    print(f'UTC adjusted instrument stopped (not recovered): {time[-1]}')
 
 if time_offset:   #unchanged from original script
 	offset = dt.timedelta(days=-365)
@@ -407,8 +407,8 @@ detect_spikes_p = False   # Optional: Detect in Pressure
 detect_spikes_rho = False #Optional: Detect spikes in Density
 
 # Spike detection parameters
-    #n1 = level 1 std error, n2 = level 2 std error, block = number of points in assesment block
-    n1 = 2; n2 = 20; block = 400
+#n1 = level 1 std error, n2 = level 2 std error, block = number of points in assesment block
+n1 = 2; n2 = 20; block = 400
 
 
 #NOTE: These plots are for manual review only.
