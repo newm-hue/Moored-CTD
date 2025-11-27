@@ -132,7 +132,7 @@ print(f"Raw data saved to {raw_output_path}")
 ###
 #%%Section 5: Extract Variables
 import yaml
-with open("variable_map.yaml","r") as f:
+with open("bin/variable_map.yaml", "r") as f:
     var_map = yaml.safe_load(f)
 
 data_ = data.copy()
@@ -544,7 +544,7 @@ variables = {
     'pressure': trimmed['p']
 }
 
-flag_arrays = load_flagged_arrays(rf'flagged_data.yaml',variables)
+flag_arrays = load_flagged_arrays(rf'flagged_data.yaml', variables)
 flagged_df = merge_flags(trimmed, flag_arrays)
 flagged_df = pd.DataFrame(flagged_df)
 
