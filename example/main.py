@@ -9,17 +9,23 @@ import xarray as xr
 import gsw
 import ctd
 import os
+from pathlib import Path
 import plotly.express as px
 from pyrsktools import RSK
 
 # Set interactive backend for matplotlib
 plt.switch_backend('Qt5Agg')  # Alternatives: 'WebAgg', 'TkAgg', etc.
 
+# Change to the script's directory
+script_dir = Path(__file__).parent
+os.chdir(script_dir)
+print(os.getcwd())
+
 ###
 #Section 2 Import metadata from yaml and calculate any derived variables
 import yaml
 
-with open("config_metadata.yaml", "r") as f:
+with open(f"config_metadata.yaml", "r") as f:
     meta = yaml.safe_load(f)
 
 #read out filename and directory for data upload
@@ -132,7 +138,7 @@ print(f"Raw data saved to {raw_output_path}")
 ###
 #%%Section 5: Extract Variables
 import yaml
-with open("bin/variable_map.yaml", "r") as f:
+with open("../bin/variable_map.yaml", "r") as f:
     var_map = yaml.safe_load(f)
 
 data_ = data.copy()
