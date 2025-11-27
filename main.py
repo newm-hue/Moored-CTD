@@ -19,7 +19,7 @@ plt.switch_backend('Qt5Agg')  # Alternatives: 'WebAgg', 'TkAgg', etc.
 #Section 2 Import metadata from yaml and calculate any derived variables
 import yaml
 
-with open("meta_data.yaml", "r") as f:
+with open("config_metadata.yaml", "r") as f:
     meta = yaml.safe_load(f)
 
 #read out filename and directory for data upload
@@ -544,7 +544,7 @@ variables = {
     'pressure': trimmed['p']
 }
 
-flag_arrays = load_flagged_arrays(rf'flagged_data.yaml', variables)
+flag_arrays = load_flagged_arrays(rf'config_flags.yaml', variables)
 flagged_df = merge_flags(trimmed, flag_arrays)
 flagged_df = pd.DataFrame(flagged_df)
 
@@ -626,7 +626,7 @@ def apply_variable_attributes(ds, metadata, t, c, p):
     return ds
 
 #Load functions and merge
-metadata = load_metadata("meta_data.yaml")
+metadata = load_metadata("config_metadata.yaml")
 ds = xr.Dataset.from_dataframe(flagged_df)
 ds = apply_metadata(ds, metadata)
 ds = apply_variable_attributes(ds, metadata, flagged_df['t'].values, flagged_df['c'].values, flagged_df['p'].values)
