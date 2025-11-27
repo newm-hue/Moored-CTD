@@ -24,7 +24,7 @@ with open("meta_data.yaml", "r") as f:
 
 #read out filename and directory for data upload
 filename=meta["filename"]
-directory=meta["directory"]
+directory=meta["directory_data"]
 
 
 # Derived values
@@ -39,6 +39,15 @@ meta["dataset_id"] = f'{meta["instrument_type"]}_{meta["cruise_number"]}_{meta["
 
 print("Latitude:", meta["lat"])
 print("Longitude:", meta["lon"])
+
+#read out site and sitename from yaml
+site=meta["site"]
+subsite=meta["subsite"]
+serial=meta["serial_number"]
+year_str= str(meta["year_n"])
+pres=meta["pres"]
+figDir = meta["directory_figures"]
+figRoot = f"{site}{year_str}{subsite}{pres}_{serial}"
 
 #read in data  Altered Shannon and Annie's to incorporate rsk files
 cnv = filename.endswith(".cnv")
@@ -193,7 +202,7 @@ fix_irregular_data = False  # if cnv jd time data exists but incorrect, and need
 UTC_offset = False          # e.g. add 7 hours if obviously not synced to UTC upon deployment; must already be in datetime format
 time_offset = False         # if need to add or remove regular time offset throughout record; must already be in datetime format
 
-from timecorr_utils import *
+from bin.timecorr_utils import *
 
 # Generate time from burst sampling
 if no_time_data:
@@ -230,7 +239,7 @@ if time_offset:   #unchanged from original script
 ###
 #Section 8 Trimming data
 # #Plot untrimmed data
-from trim_utils import plot_available_vars, trim_data
+from bin.trim_utils import plot_available_vars
 
 data_dict = {
         't': t,
@@ -243,11 +252,11 @@ plot_available_vars(
       include_do=False
  )
 
-plt.savefig("raw_data.png", dpi=300, bbox_inches="tight")
+plt.savefig(f"{figDir}{figRoot}_raw_data.png", dpi=300, bbox_inches="tight")
 ##
 #%%Section 9 Plot trim indices
 
-from trim_utils import plot_trimmed_var
+from bin.trim_utils import plot_trimmed_var
 
 plot_trimmed_var(
     data_dict=data_dict,
@@ -256,11 +265,11 @@ plot_trimmed_var(
     include_do=False
 )
 
-plt.savefig("trim_indices.png", dpi=300, bbox_inches="tight")
+plt.savefig(f"{figDir}{figRoot}_trim_indices.png", dpi=300, bbox_inches="tight")
 ##
 #Section 10
 #Trim data and plot trimmed data
-from trim_utils import trim_data
+from bin.trim_utils import trim_data
 data_dict = {'time': time, 't': t, 'c': c, 'p': p, 'do': do}
 trimmed = trim_data(data_dict, 4675, 24691, time_trim=False, include_do=False)
 print({k: v.shape for k, v in trimmed.items()})
@@ -339,7 +348,7 @@ trimmed_ds.attrs.update({
 })
 
 # Output path
-outpath = os.path.join(meta["directory"], meta["filename"].replace(".cnv", "_trimmed.nc").replace(".asc", "_trimmed.nc"))
+outpath = os.path.join(meta["directory_data"], meta["filename"].replace(".cnv", "_trimmed.nc").replace(".asc", "_trimmed.nc"))
 
 # Save to NetCDF
 trimmed_ds.to_netcdf(outpath)
@@ -361,15 +370,9 @@ ax_ts.set_ylabel('Temperature')
 ax_ts.set_title('T-S Diagram')
 cbar = plt.colorbar(sc, label='Index')
 
-#read out site and sitename from yaml
-site=meta["site"]
-subsite=meta["subsite"]
-serial=meta["serial_number"]
-year_str= str(meta["year_n"])
-pres=meta["pres"]
 
-ts_plot_path = f'{directory}{site}{year_str}{subsite}{pres}_{serial}_TS_plot.png'
-plt.savefig(ts_plot_path, dpi=300, bbox_inches='tight')
+
+plt.savefig(f"{figDir}/{figRoot}_TS_plot.png", dpi=300, bbox_inches='tight')
 plt.show(block=True)
 ###
 #%%Section 11B: Temperature Salinity Plot, Interactive
@@ -471,7 +474,7 @@ for i, var in enumerate(plot_vars):
     axes[i].set_ylabel(var_labels[var])
 
 plt.suptitle('Manual Data Inspection with Spike Suggestions')
-plt.savefig(f'{directory}{site}{year_str}{subsite}{pres}_{serial}_ManualSpikeReview.png', dpi=300, bbox_inches='tight')
+plt.savefig(f'{figDir}{figRoot}_ManualSpikeReview.png', dpi=300, bbox_inches='tight')
 plt.show(block=True)
 
 
@@ -541,7 +544,7 @@ variables = {
     'pressure': trimmed['p']
 }
 
-flag_arrays = load_flagged_arrays(rf'{directory}3558/flagged_data.yaml',variables)
+flag_arrays = load_flagged_arrays(rf'flagged_data.yaml',variables)
 flagged_df = merge_flags(trimmed, flag_arrays)
 flagged_df = pd.DataFrame(flagged_df)
 
@@ -649,7 +652,7 @@ ds['flag_p'].attrs.update({
 })
 
 # Output path
-outpath = os.path.join(meta["directory"], meta["filename"].replace(".cnv", "_trimmed.nc").replace(".asc", "_trimmed.nc"))
+outpath = os.path.join(meta["directory_data"], meta["filename"].replace(".cnv", "_trimmed.nc").replace(".asc", "_trimmed.nc"))
 
 # Save to NetCDF
 trimmed_ds.to_netcdf(outpath)
