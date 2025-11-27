@@ -246,26 +246,28 @@ data_dict = {
         'c': c,
         'p': p
     }
-plot_available_vars(
+fig = plot_available_vars(
       available_vars=['t','c','p'],
       data_dict=data_dict,
       include_do=False
  )
 
-plt.savefig(f"{figDir}{figRoot}_raw_data.png", dpi=300, bbox_inches="tight")
+fig.savefig(f"{figDir}{figRoot}_raw_data.png", dpi=300, bbox_inches="tight")
+
 ##
 #%%Section 9 Plot trim indices
 
 from bin.trim_utils import plot_trimmed_var
 
-plot_trimmed_var(
+fig = plot_trimmed_var(
     data_dict=data_dict,
     start_index=4675,
     finish_index=24691,
     include_do=False
 )
 
-plt.savefig(f"{figDir}{figRoot}_trim_indices.png", dpi=300, bbox_inches="tight")
+fig.savefig(f"{figDir}{figRoot}_trim_indices.png", dpi=300, bbox_inches="tight")
+
 ##
 #Section 10
 #Trim data and plot trimmed data

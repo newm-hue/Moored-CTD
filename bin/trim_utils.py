@@ -31,6 +31,8 @@ def plot_available_vars(available_vars, data_dict, include_do=False):
     plt.suptitle("Available Variables (Pre-Trim)")
     plt.show(block=True)
 
+    return fig
+
 
 #Function for trimming data
 def plot_trimmed_var (data_dict, start_index, finish_index, include_do=False):
@@ -58,6 +60,7 @@ def plot_trimmed_var (data_dict, start_index, finish_index, include_do=False):
     plt.suptitle('Untrimmed Variables with Trim Indices')
     plt.show(block=True)
 
+    return fig
 
 #trim the data
 def trim_data(data_dict, start, finish, time_trim = False, include_do=False):
