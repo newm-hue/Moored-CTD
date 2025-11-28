@@ -9,36 +9,51 @@ import xarray as xr
 import gsw
 import ctd
 import os
+from pathlib import Path
 import plotly.express as px
 from pyrsktools import RSK
 
 # Set interactive backend for matplotlib
 plt.switch_backend('Qt5Agg')  # Alternatives: 'WebAgg', 'TkAgg', etc.
 
+# Change to the script's directory
+script_dir = Path(__file__).parent
+os.chdir(script_dir)
+print(os.getcwd())
+
 ###
 #Section 2 Import metadata from yaml and calculate any derived variables
 import yaml
 
-with open("meta_data.yaml", "r") as f:
+with open(f"config_metadata.yaml", "r") as f:
     meta = yaml.safe_load(f)
 
 #read out filename and directory for data upload
 filename=meta["filename"]
-directory=meta["directory"]
+directory=meta["directory_data"]
 
 
-    # Derived values
-    meta["year_1"] = meta["year_n"] + 1
-    meta["year_str"] = str(meta["year_n"])
-    meta["year_2str"] = str(meta["year_n"] - 2000)
-    meta["lat"] = round(meta["latdeg"] + meta["latdec"] / 60, 6)
-    meta["latstr"] = f'{meta["latdeg"]} {meta["latdec"]}'
-    meta["lon"] = round(-(meta["londeg"] + meta["londec"] / 60), 6)
-    meta["lonstr"] = f'{-meta["londeg"]} {meta["londec"]}'
-    meta["dataset_id"] = f'{meta["instrument_type"]}_{meta["cruise_number"]}_{meta["mooring_number"]}_{meta["serial_number"]}_{meta["year_n"]}'
+# Derived values
+meta["year_1"] = meta["year_n"] + 1
+meta["year_str"] = str(meta["year_n"])
+meta["year_2str"] = str(meta["year_n"] - 2000)
+meta["lat"] = round(meta["latdeg"] + meta["latdec"] / 60, 6)
+meta["latstr"] = f'{meta["latdeg"]} {meta["latdec"]}'
+meta["lon"] = round(-(meta["londeg"] + meta["londec"] / 60), 6)
+meta["lonstr"] = f'{-meta["londeg"]} {meta["londec"]}'
+meta["dataset_id"] = f'{meta["instrument_type"]}_{meta["cruise_number"]}_{meta["mooring_number"]}_{meta["serial_number"]}_{meta["year_n"]}'
 
 print("Latitude:", meta["lat"])
 print("Longitude:", meta["lon"])
+
+#read out site and sitename from yaml
+site=meta["site"]
+subsite=meta["subsite"]
+serial=meta["serial_number"]
+year_str= str(meta["year_n"])
+pres=meta["pres"]
+figDir = meta["directory_figures"]
+figRoot = f"{site}{year_str}{subsite}{pres}_{serial}"
 
 #read in data  Altered Shannon and Annie's to incorporate rsk files
 cnv = filename.endswith(".cnv")
@@ -51,7 +66,7 @@ if cnv:
     data = ctd.from_cnv(rf'{directory}{filename}')  # Load .cnv data
     raw_keys = data.keys()  # Get column names
 elif asc:
-     data = pd.read_csv(
+    data = pd.read_csv(
 	   rf'{directory}{filename}',
 	   header=None,
 	   names=['temperature', 'conductivity', 'pressure', 'dates', 'times'],
@@ -59,23 +74,23 @@ elif asc:
 	   encoding='utf-8',
 	   skip_blank_lines=True
    )
-     raw_keys = ['temperature', 'conductivity', 'pressure', 'dates', 'times']
-     elif rsk:
-     rsk_obj = RSK(rf'{directory}{filename}')
-     rsk_obj.open()
-     rsk_obj.readdata()
-     df = pd.DataFrame(rsk_obj.data)
-     timestamps = df['timestamp']
-     dt_array = pd.to_datetime(df['timestamp'])
-     df['dates'] = dt_array.dt.strftime('%d %b %Y')
-     df['times'] = dt_array.dt.strftime('%H:%M:%S')
-     data = df[['temperature', 'conductivity', 'pressure', 'dates', 'times']]
+    raw_keys = ['temperature', 'conductivity', 'pressure', 'dates', 'times']
+elif rsk:
+    rsk_obj = RSK(rf'{directory}{filename}')
+    rsk_obj.open()
+    rsk_obj.readdata()
+    df = pd.DataFrame(rsk_obj.data)
+    timestamps = df['timestamp']
+    dt_array = pd.to_datetime(df['timestamp'])
+    df['dates'] = dt_array.dt.strftime('%d %b %Y')
+    df['times'] = dt_array.dt.strftime('%H:%M:%S')
+    data = df[['temperature', 'conductivity', 'pressure', 'dates', 'times']]
 
     raw_keys = data.columns.tolist()
 
 
 
- print(data.head())
+print(data.head())
 
 print("Raw keys:", raw_keys)
 
@@ -123,8 +138,8 @@ print(f"Raw data saved to {raw_output_path}")
 ###
 #%%Section 5: Extract Variables
 import yaml
-    with open("variable_map.yaml","r") as f:
-        var_map = yaml.safe_load(f)
+with open("../bin/variable_map.yaml", "r") as f:
+    var_map = yaml.safe_load(f)
 
 data_ = data.copy()
 
@@ -152,23 +167,23 @@ if asc or rsk and 'dates' in raw_keys and 'times' in raw_keys:  #added dates MN
     times = data_['times']
 
 
-	datetime_array = np.array([
+datetime_array = np.array([
 		dt.datetime.strptime(f"{str(date).strip()} {str(time_str).strip()}", "%d %b %Y %H:%M:%S")
 		for date, time_str in zip(dates, times)
 	])
 
-  # Extract year from first date    added MN
-    year_n = datetime_array[0].year
+# Extract year from first date    added MN
+year_n = datetime_array[0].year
 
 
-	# Convert to Julian Day   new naming conventions  MN
-	reference_date = dt.datetime(year_n - 1, 12, 31)
-	julian_array = np.array([
+# Convert to Julian Day   new naming conventions  MN
+reference_date = dt.datetime(year_n - 1, 12, 31)
+julian_array = np.array([
     	(dt_obj - reference_date).days + (dt_obj - reference_date).seconds / 86400
    		for dt_obj in datetime_array
 	])
-	#assign time to Julian Day  added MN
-	time=julian_array
+#assign time to Julian Day  added MN
+time=julian_array
 
 print("Available Variables:", available_vars)
 
@@ -193,7 +208,7 @@ fix_irregular_data = False  # if cnv jd time data exists but incorrect, and need
 UTC_offset = False          # e.g. add 7 hours if obviously not synced to UTC upon deployment; must already be in datetime format
 time_offset = False         # if need to add or remove regular time offset throughout record; must already be in datetime format
 
-from timecorr_utils import *
+from bin.timecorr_utils import *
 
 # Generate time from burst sampling
 if no_time_data:
@@ -207,9 +222,9 @@ if format_time_data:
 
 # Trim time  Unchanged from original code
 if time_trim:
-	time = time[3849:].copy() # check time, p, t, c for proper trim indices
-	print(f'Instrument started (not deployed): {time[0]}')
-	print(f'Instrument stopped (not recovered): {time[-1]}')
+    time = time[3849:].copy() # check time, p, t, c for proper trim indices
+    print(f'Instrument started (not deployed): {time[0]}')
+    print(f'Instrument stopped (not recovered): {time[-1]}')
 
 # Interpolate over spikes
 if time_spike:
@@ -217,9 +232,9 @@ if time_spike:
     print(f'Instrument started (not deployed): {time[0]}, Instrument stopped (not recovered): {time[-1]}')
 
 if UTC_offset:   #unchanged from original script
-	time = time.copy() + dt.timedelta(hours=7)
-	print(f'UTC adjusted instrument started (not deployed): {time[0]}')
-	print(f'UTC adjusted instrument stopped (not recovered): {time[-1]}')
+    time = time.copy() + dt.timedelta(hours=7)
+    print(f'UTC adjusted instrument started (not deployed): {time[0]}')
+    print(f'UTC adjusted instrument stopped (not recovered): {time[-1]}')
 
 if time_offset:   #unchanged from original script
 	offset = dt.timedelta(days=-365)
@@ -230,37 +245,39 @@ if time_offset:   #unchanged from original script
 ###
 #Section 8 Trimming data
 # #Plot untrimmed data
-from trim_utils import plot_available_vars, trim_data
+from bin.trim_utils import plot_available_vars
 
 data_dict = {
         't': t,
         'c': c,
         'p': p
     }
-plot_available_vars(
+fig = plot_available_vars(
       available_vars=['t','c','p'],
       data_dict=data_dict,
       include_do=False
  )
 
-plt.savefig("raw_data.png", dpi=300, bbox_inches="tight")
+fig.savefig(f"{figDir}{figRoot}_raw_data.png", dpi=300, bbox_inches="tight")
+
 ##
 #%%Section 9 Plot trim indices
 
-from trim_utils import plot_trimmed_var
+from bin.trim_utils import plot_trimmed_var
 
-plot_trimmed_var(
+fig = plot_trimmed_var(
     data_dict=data_dict,
     start_index=4675,
     finish_index=24691,
     include_do=False
 )
 
-plt.savefig("trim_indices.png", dpi=300, bbox_inches="tight")
+fig.savefig(f"{figDir}{figRoot}_trim_indices.png", dpi=300, bbox_inches="tight")
+
 ##
 #Section 10
 #Trim data and plot trimmed data
-from trim_utils import trim_data
+from bin.trim_utils import trim_data
 data_dict = {'time': time, 't': t, 'c': c, 'p': p, 'do': do}
 trimmed = trim_data(data_dict, 4675, 24691, time_trim=False, include_do=False)
 print({k: v.shape for k, v in trimmed.items()})
@@ -339,7 +356,7 @@ trimmed_ds.attrs.update({
 })
 
 # Output path
-outpath = os.path.join(meta["directory"], meta["filename"].replace(".cnv", "_trimmed.nc").replace(".asc", "_trimmed.nc"))
+outpath = os.path.join(meta["directory_data"], meta["filename"].replace(".cnv", "_trimmed.nc").replace(".asc", "_trimmed.nc"))
 
 # Save to NetCDF
 trimmed_ds.to_netcdf(outpath)
@@ -361,15 +378,9 @@ ax_ts.set_ylabel('Temperature')
 ax_ts.set_title('T-S Diagram')
 cbar = plt.colorbar(sc, label='Index')
 
-#read out site and sitename from yaml
-site=meta["site"]
-subsite=meta["subsite"]
-serial=meta["serial_number"]
-year_str= str(meta["year_n"])
-pres=meta["pres"]
 
-ts_plot_path = f'{directory}{site}{year_str}{subsite}{pres}_{serial}_TS_plot.png'
-plt.savefig(ts_plot_path, dpi=300, bbox_inches='tight')
+
+plt.savefig(f"{figDir}/{figRoot}_TS_plot.png", dpi=300, bbox_inches='tight')
 plt.show(block=True)
 ###
 #%%Section 11B: Temperature Salinity Plot, Interactive
@@ -407,8 +418,8 @@ detect_spikes_p = False   # Optional: Detect in Pressure
 detect_spikes_rho = False #Optional: Detect spikes in Density
 
 # Spike detection parameters
-    #n1 = level 1 std error, n2 = level 2 std error, block = number of points in assesment block
-    n1 = 2; n2 = 20; block = 400
+#n1 = level 1 std error, n2 = level 2 std error, block = number of points in assesment block
+n1 = 2; n2 = 20; block = 400
 
 
 #NOTE: These plots are for manual review only.
@@ -471,13 +482,11 @@ for i, var in enumerate(plot_vars):
     axes[i].set_ylabel(var_labels[var])
 
 plt.suptitle('Manual Data Inspection with Spike Suggestions')
-plt.savefig(f'{directory}{site}{year_str}{subsite}{pres}_{serial}_ManualSpikeReview.png', dpi=300, bbox_inches='tight')
+plt.savefig(f'{figDir}{figRoot}_ManualSpikeReview.png', dpi=300, bbox_inches='tight')
 plt.show(block=True)
 
-
-##
-#Section 13 Manual data flagging
-#data and flags stored in YAML and read in
+###
+#%%Section 13: Apply WHOCE CTD Flags to variables (flags stored in YAML and read in)
 
 import yaml
 
@@ -541,7 +550,7 @@ variables = {
     'pressure': trimmed['p']
 }
 
-flag_arrays = load_flagged_arrays(rf'{directory}3558/flagged_data.yaml',variables)
+flag_arrays = load_flagged_arrays(rf'config_flags.yaml', variables)
 flagged_df = merge_flags(trimmed, flag_arrays)
 flagged_df = pd.DataFrame(flagged_df)
 
@@ -623,7 +632,7 @@ def apply_variable_attributes(ds, metadata, t, c, p):
     return ds
 
 #Load functions and merge
-metadata = load_metadata("meta_data.yaml")
+metadata = load_metadata("config_metadata.yaml")
 ds = xr.Dataset.from_dataframe(flagged_df)
 ds = apply_metadata(ds, metadata)
 ds = apply_variable_attributes(ds, metadata, flagged_df['t'].values, flagged_df['c'].values, flagged_df['p'].values)
@@ -649,7 +658,7 @@ ds['flag_p'].attrs.update({
 })
 
 # Output path
-outpath = os.path.join(meta["directory"], meta["filename"].replace(".cnv", "_trimmed.nc").replace(".asc", "_trimmed.nc"))
+outpath = os.path.join(meta["directory_data"], meta["filename"].replace(".cnv", "_trimmed.nc").replace(".asc", "_trimmed.nc"))
 
 # Save to NetCDF
 trimmed_ds.to_netcdf(outpath)

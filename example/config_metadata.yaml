@@ -8,8 +8,9 @@ latdeg: 45   #latitude degrees
 latdec: 16.3627  #latitude decimal minutes
 londeg: -66  #longitude degrees east
 londec: 4.0597  #longitude decimal minutes
-directory: "C:/Users/NewhookM/Documents/OPP work/MCTD Processing Python/M2116_FormDragDownstream/Raw/3558/"  #File directory
 filename: "DSRF_MidCTD_SBE3558.asc" #Complete filename
+directory_data: "/home/jmm000/DATA/OPPEast/MCTD/BOF_RevFallsDownstream_MCTD_2019/raw/"  # Data file directory #TODO: Maybe remove this from the metadata file and put at start of script?
+directory_figures: "/home/jmm000/DATA/OPPEast/MCTD/BOF_RevFallsDownstream_MCTD_2019/figures/" # Figure directory
 location: "Saint John Harbour"  #Location of instrument deployment
 cruise_name: "Mooring Deployment"
 instrument_model: "SBE37-SM"  #Unsure difference between this and earlier instrument model definition
