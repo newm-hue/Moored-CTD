@@ -245,7 +245,7 @@ if time_offset:   #unchanged from original script
 ###
 #Section 8 Trimming data
 # #Plot untrimmed data
-from bin.trim_utils import plot_available_vars
+from bin.trim_utils import plot_available_vars, finish, start
 
 data_dict = {
         't': t,
@@ -267,8 +267,8 @@ from bin.trim_utils import plot_trimmed_var
 
 fig = plot_trimmed_var(
     data_dict=data_dict,
-    start_index=4675,
-    finish_index=24691,
+    start_index=start,
+    finish_index=finish,
     include_do=False
 )
 
@@ -487,63 +487,9 @@ plt.show(block=True)
 
 ###
 #%%Section 13: Apply WHOCE CTD Flags to variables (flags stored in YAML and read in)
+from bin.qc_utils import load_flagged_arrays
 
-import yaml
-
-def load_flagged_arrays(filepath, variables):
-    with open(filepath, 'r') as f:
-        flagged_config = yaml.safe_load(f)
-
-    print("Loaded keys:", flagged_config.keys())
-
-    flag_arrays = {}
-
-    for var_name, arr in variables.items():
-         #Default flag value = 2
-        flag_array = np.full_like(arr, 2, dtype=int)
-
-        if var_name in flagged_config:
-            flagged_t_data = []
-
-            # data point flags
-            flags = flagged_config[var_name].get('flags', [])
-            flagged_t_data.extend(flags)
-
-            # data range flags
-            ranges = flagged_config[var_name].get('ranges', [])
-            for entry in ranges:
-                if len(entry) == 3:
-                    start, end, value = entry
-                elif len(entry) == 2:
-                    start, end = entry
-                    value = 2  # default flag
-                else:
-                    raise ValueError(f"Invalid range entry: {entry}")
-                flagged_t_data.extend([(i, value) for i in range(start, end)])
-
-            # Apply flags
-            if flagged_t_data:
-                indices, values = zip(*flagged_t_data)
-                flag_array[np.array(indices, dtype=int)] = np.array(values, dtype=int)
-
-        # assign NaNs
-        flag_array[np.isnan(arr)] = 5
-
-        flag_arrays[var_name] = flag_array
-
-    print("YAML keys:", flagged_config.keys())
-    print("Variable keys:", variables.keys())
-
-    return flag_arrays
-
-#create data frame
-def merge_flags(trimmed, flag_arrays):
-    flagged_df = trimmed.copy()
-    flagged_df['flag_t'] = flag_arrays['temperature']
-    flagged_df['flag_c'] = flag_arrays['conductivity']
-    flagged_df['flag_p'] = flag_arrays['pressure']
-    return flagged_df
-
+from bin.qc_utils import merge_flags
 variables = {
     'temperature': trimmed['t'],
     'conductivity': trimmed['c'],
@@ -553,6 +499,13 @@ variables = {
 flag_arrays = load_flagged_arrays(rf'config_flags.yaml', variables)
 flagged_df = merge_flags(trimmed, flag_arrays)
 flagged_df = pd.DataFrame(flagged_df)
+
+#plot flagged data
+from bin.qc_utils import plot_flagged_data
+fig, axes = plot_flagged_data(flagged_df, include_do=False)
+
+
+
 
 ## section 14  Create final NetCDF
 #Load in metadata from YAML and merge with NetCDF attributes
@@ -665,5 +618,4 @@ trimmed_ds.to_netcdf(outpath)
 print(f"Trimmed data saved to {outpath}")
 
 
-##
 

@@ -1,6 +1,24 @@
 #Set function for plotting untrimmed data
 import matplotlib.pyplot as plt
 import gsw
+import yaml
+import os
+
+
+
+#yaml directory
+base_dir = os.path.dirname(__file__)
+yaml_path = os.path.join(base_dir, "variable_map.yaml")
+
+
+#Load in variable map with trim start and finish indices
+with open(yaml_path, "r") as f:
+    variable_map = yaml.safe_load(f)
+
+#Name start and finish indices as data
+start = variable_map["trim"]["start"]
+finish = variable_map["trim"]["finish"]
+
 
 def plot_available_vars(available_vars, data_dict, include_do=False):
     # Setup Plotting Variable Structure
@@ -35,7 +53,7 @@ def plot_available_vars(available_vars, data_dict, include_do=False):
 
 
 #Function for trimming data
-def plot_trimmed_var (data_dict, start_index, finish_index, include_do=False):
+def plot_trimmed_var (data_dict, start_index = start, finish_index = finish, include_do=False):
     raw_var_labels = {
         't': 'Temperature',
         'c': 'Conductivity',
