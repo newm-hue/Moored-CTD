@@ -611,11 +611,15 @@ ds['flag_p'].attrs.update({
 })
 
 # Output path
-outpath = os.path.join(meta["directory_data"], meta["filename"].replace(".cnv", "_trimmed.nc").replace(".asc", "_trimmed.nc"))
+outpath = os.path.join(metadata["directory_data"],
+                       metadata["filename"].replace(".cnv", "_flagged.nc")
+                                           .replace(".asc", "_flagged.nc")
+                                           .replace(".rsk", "_flagged.nc")
+)
 
 # Save to NetCDF
-trimmed_ds.to_netcdf(outpath)
-print(f"Trimmed data saved to {outpath}")
+ds.to_netcdf(outpath)
+print(f"Flagged data saved to {outpath}")
 
 
 
