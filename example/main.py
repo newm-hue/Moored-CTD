@@ -58,7 +58,7 @@ figRoot = f"{site}{year_str}{subsite}{pres}_{serial}"
 #read in data  Altered Shannon and Annie's to incorporate rsk files
 cnv = filename.endswith(".cnv")
 asc = filename.endswith(".asc")
-rbr = filename.endswith(".rsk")
+rsk = filename.endswith(".rsk")
 data = None  # Initialize empty dataset
 available_vars = []  # List to store available variable names
 
