@@ -1,36 +1,39 @@
-year_n: 2019  #Deployment year
-site: "Saint John" #mooring site location
-subsite: "M3558" #set to '' for single mooring, or '-X' for multiple moorings
-instrument_type: "MCTD"   #moored, profiling, etc
-corr_water_depth: 3 #depth in metres from sounding
-pres: "" #Used if multiple sensors on a line
-latdeg: 45   #latitude degrees
-latdec: 16.3627  #latitude decimal minutes
-londeg: -66  #longitude degrees east
-londec: 4.0597  #longitude decimal minutes
-filename: "DSRF_MidCTD_SBE3558.asc" #Complete filename
-directory_data: "C:/Users/NewhookM/Documents/OPP work/MCTD Processing Python/M2116_FormDragDownstream/Raw/3558/"  # Data file directory #TODO: Maybe remove this from the metadata file and put at start of script?
-directory_figures: "C:/Users/NewhookM/Documents/OPP work/MCTD Processing Python/M2116_FormDragDownstream/Raw/3558/" # Figure directory
-location: "Saint John Harbour"  #Location of instrument deployment
-cruise_name: "Mooring Deployment"
-instrument_model: "SBE37-SM"  #Unsure difference between this and earlier instrument model definition
-
-
-
-
-
-#global attributes for NetCDF from Shannon and Annies code
+#Creator and Processor details
+creator_name: "Justine Macmillan"
+creator_email: "Justine.Macmillan@dfo-mpo.gc.ca"
+processor_name: "Mandi Newhook"
+processor_email: "Mandi.Newhook@dfo-mpo.gc.ca"
+directory_data: "C:/Users/NewhookM/Documents/OPP work/MCTD Processing Python/M2116_FormDragDownstream/Raw/3558/"
+directory_figures: "C:/Users/NewhookM/Documents/OPP work/MCTD Processing Python/M2116_FormDragDownstream/Raw/3558/"
+filename: "DSRF_MidCTD_SBE3558.asc"
+year_n: 2019
+chief_scientist: "Justine Macmillan"
+cruise_number: "OPP2019802"
+deployment_name: "Pearley"
+site: "Saint John"
+mooring: "3558"
+moorong_number: "3558"
+latdeg: 45
+latdec: 16.3627
+londeg: -66
+londec: 4.0597
+platform: "mooring"
+data_type: "moored CTD"
+instrument_type: "MCTD"
+inst_type: ""
+instrument_model: "SBE37-SM"
+serial: "1077"
 Conventions: "CF-1.6, ACDD-1.3, IOOS-1.2"
 standard_name_vocabulary: "CF Standard Name Table v80"
 featureType: "timeseries"
 cdm_data_type: "station"
-data_type: "MCTD"   #instrument type: moored, profiling, etc
+data_type: "MCTD"
 processing_level: "Data trimmed for in water measurements, drift corrected and QC flags applied"
-country_code: "1810"  #Based on SDN vocabulary
-sdn_country_id": "SDN:C32::CA"  #Based on SDN vocabulary, Canada=32
+country_code: "1810"
+sdn_country_id": "SDN:C32::CA"
 sdn_country_vocabulary: "http://vocab.nerc.ac.uk/collection/C18/current/"
 institution: "DFO BIO"
-sdn_institution_id: "SDN:EDMO::1811" #EDMO database, maintained by SeaDataNet #1811 is Woods Hole
+sdn_institution_id: "SDN:EDMO::1811"
 sdn_institution_vocabulary: "https://edmo.seadatanet.org"
 creator_type: "person"
 creator_name: "Justine Macmillan"
@@ -41,6 +44,8 @@ creator_address: "1 Challenger Drive, Dartmouth NS, B2Y 4A2."
 creator_city: "Dartmouth"
 creator_sector: "gov federal"
 creator_url: "https://www.bio.gc.ca/index-en.php"
+processor_name: "Mandi Newhook"
+processor_email: "Mandi.Newhook@dfo-mpo.gc.ca"
 publisher_type: "institution"
 publisher_name: "Fisheries and Oceans Canada (DFO)"
 publisher_country: "Canada"
@@ -48,57 +53,55 @@ publisher_email: "BIO.Datashop@dfo-mpo.gc.ca"
 publisher_institution: "Bedford Institute of Oceanography"
 publisher_sector: "gov federal"
 publisher_url: "https://www.bio.gc.ca/index-en.php"
-sdn_custodian_id: "SDN:EDMO::1811" #The Bedford Institute of Oceanography has a European Directory of Marine Organisations (EDMO) code  of 1811 http://edmo.seadatanet.org/report/1811
+sdn_custodian_id: "SDN:EDMO::1811"
 sdn_originator_id: "SDN:EDMO::1811"
 sdn_creator_id: "SDN:EDMO::1811"
 sdn_publisher_id: "SDN:EDMO::1811"
-sdn_distributor_id: "SDN:EDMO::1979" #DFO data shop (MEDS)  has an EDMO code of 1979  https://edmo.seadatanet.org/report/1979
+sdn_distributor_id: "SDN:EDMO::1979"
 naming_authority: "ca.gc.bio"
 license: "Open Government License - Canada, https://open.canada.ca/en/open-government-licence-canada"
 infoUrl: "https://tc.canada.ca/en/campaigns/oceans-protection-plan"
 inst_type: "MCTD"
 sampling_interval: "60s"
-cruise_number: "OPP2019802"   #Archive cruise number and acronym
+cruise_number: "OPP2019802"
 cruise_name: "Mooring Deployment"
 mooring_number: "M3558"
-serial_number: "SBE3558"  #Instruments serial number
+serial_number: "SBE3558"
 instrument_offbottom_depth": "0"
-instrument_depth: "3"  #same as inst_depth
-inst_depth: "3"    #same as insrutment_depth
+instrument_depth: "3"
+inst_depth: "3"
 chief_scientist: "Justine Macmillan"
-platform: "mooring"   #mooring, profiling, etc
-platform_name: "3558"  #Mooring number
-platform_id: "3558"   #Mooring number
-sdn_platform_id: "SDN:L06::48" #Based on https://vocab.seadatanet.org/search vocabulary coding   #48 is coding for research vessel
+platform: "mooring"
+platform_name: "3558"
+platform_id: "3558"
+sdn_platform_id: "SDN:L06::48"
 sdn_platform_vocabulary: "https://vocab.nerc.ac.uk/collection/L06/current/"
-deployment_platform_name: ""   #numeric code for ship used in deployment
-sdn_deployment_platform_id: "" #SDN-C17 vocabulary #18HS = High-Speed Surface Vehicle
+deployment_platform_name: ""
+sdn_deployment_platform_id: ""
 sdn_deployment_platform_vocabulary: "https://vocab.nerc.ac.uk/collection/C17/current/"
 instrument_model: "SBE37-SM"
-instrument: "serial number:SBE37-M"  #Instruments serial number
-sdn_instrument_id: ""  #SDN-L22 vocabulary #EX. TOOL1456 = "Temperature and Oxygen Logger"
+instrument: "serial number:SBE37-M"
+sdn_instrument_id: ""
 sdn_instrument_vocabulary: "http://vocab.nerc.ac.uk/collection/L22/current/"
-sdn_device_category_id: "SDN:L05::350" #SDN-L05 vocabulary: https://vocab.seadatanet.org/search #EX. 350 = salinity sensor, 134 = water temperature sensor, WPS = Water Profiling System
+sdn_device_category_id: "SDN:L05::350"
 sdn_device_category_vocabulary: "http://vocab.nerc.ac.uk/collection/L05/current/"
-location_description: "Saint John Harbour"  #Location of instrument deployment
-longitude: "66.0676 W"   #Printed in section 2 66.0676 W"
-latitude": "45.2727 N"  #Printed in section 2
+location_description: "Saint John Harbour"
+longitude: "66.0676 W"
+latitude": "45.2727 N"
 geospatial_lat_min: "45.2727 "
 geospatial_lat_max: "45.2727 "
 geospatial_lat_units: "degrees_north"
-geospatial_lon_min: "-66.0676"    #degrees east
-geospatial_lon_max: "-66.0676"    #degrees east
+geospatial_lon_min: "-66.0676"
+geospatial_lon_max: "-66.0676"
 geospatial_lon_units: "degrees_east"
-geospatial_vertical_max: "3"   #depth of sensors
-geospatial_vertical_min: "3"   #depth of sensors
+geospatial_vertical_max: "3"
+geospatial_vertical_min: "3"
 geospatial_vertical_units: "metres"
-geospatial_vertical_positive: "down"    #Shannon and Annie had it set to this, not sure why
+geospatial_vertical_positive: "down"
 geospatial_bounds: "POINT (45.2727 N, 66.0676 W)"
-#geospatial_bounds_crs: "EPSG:4326" #"EPSG:4326" corresponds to the WGS 84 coordinate system, commonly used for GPS coordinates.
-#geospatial_bounds_vertical_crs: "EPSG:5831" #"EPSG:5831" corresponds to the "Vertical CRS based on the EGM96 geoid model".
-project: "Ocean Protection Plan" #Project data falls under
-program: "OPP- Drift Prediction and Nearshore Modelling"  #Overhead program
-mission_description: "OPP- Drift Prediction and Nearshore Modelling"  #Overhead program
+project: "Ocean Protection Plan"
+program: "OPP- Drift Prediction and Nearshore Modelling"
+mission_description: "OPP- Drift Prediction and Nearshore Modelling"
 keywords: "Time-series, Marine-data, oceans, climate, water-temperature, salinity, mooring, moored-ctd, conductivity, pressure"
 history: "Created on 2025-18-11"
-comment: ""   # start empty
+comment: ""
