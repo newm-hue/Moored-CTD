@@ -496,7 +496,7 @@ variables = {
     'pressure': trimmed['p']
 }
 
-flag_arrays = load_flagged_arrays(rf'config_flags.yaml', variables)
+flag_arrays = load_flagged_arrays(rf'config_process.yaml', variables)
 flagged_df = merge_flags(trimmed, flag_arrays)
 flagged_df = pd.DataFrame(flagged_df)
 

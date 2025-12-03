@@ -1,3 +1,9 @@
+#trim indices
+trim:
+    start: 4675
+    finish: 24691
+
+
 temperature:
   flags:        #flags for individual points [index, flag]
     - [188, 3]

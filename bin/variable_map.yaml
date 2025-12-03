@@ -10,6 +10,3 @@
 'dates' : dates #for ASC files
 'times': time  # Time needs conversion for ASC files
 
-trim:
-    start: 4675
-    finish: 24691
