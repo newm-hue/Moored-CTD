@@ -25,7 +25,7 @@ print(os.getcwd())
 #Section 2 Import metadata from yaml and calculate any derived variables
 import yaml
 
-with open(f"example/config_metadata.yaml", "r") as f:
+with open(f"config_metadata.yaml", "r") as f:
     meta = yaml.safe_load(f)
 
 #read out filename and directory for data upload
@@ -138,7 +138,7 @@ print(f"Raw data saved to {raw_output_path}")
 ###
 #%%Section 5: Extract Variables
 import yaml
-with open("bin/variable_map.yaml", "r") as f:
+with open("../bin/variable_map.yaml", "r") as f:
     var_map = yaml.safe_load(f)
 
 data_ = data.copy()
@@ -496,7 +496,7 @@ variables = {
     'pressure': trimmed['p']
 }
 
-flag_arrays = load_flagged_arrays(rf'example/config_process.yaml', variables)
+flag_arrays = load_flagged_arrays(rf'config_process.yaml', variables)
 flagged_df = merge_flags(trimmed, flag_arrays)
 flagged_df = pd.DataFrame(flagged_df)
 
@@ -585,7 +585,7 @@ def apply_variable_attributes(ds, metadata, t, c, p):
     return ds
 
 #Load functions and merge
-metadata = load_metadata("example/config_metadata.yaml")
+metadata = load_metadata("config_metadata.yaml")
 ds = xr.Dataset.from_dataframe(flagged_df)
 ds = apply_metadata(ds, metadata)
 ds = apply_variable_attributes(ds, metadata, flagged_df['t'].values, flagged_df['c'].values, flagged_df['p'].values)
