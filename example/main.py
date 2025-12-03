@@ -279,7 +279,7 @@ fig.savefig(f"{figDir}{figRoot}_trim_indices.png", dpi=300, bbox_inches="tight")
 #Trim data and plot trimmed data
 from bin.trim_utils import trim_data
 data_dict = {'time': time, 't': t, 'c': c, 'p': p, 'do': do}
-trimmed = trim_data(data_dict, 4675, 24691, time_trim=False, include_do=False)
+trimmed = trim_data(data_dict, start, finish, time_trim=False, include_do=False)
 print({k: v.shape for k, v in trimmed.items()})
 
 
@@ -496,7 +496,7 @@ variables = {
     'pressure': trimmed['p']
 }
 
-flag_arrays = load_flagged_arrays(rf'config_flags.yaml', variables)
+flag_arrays = load_flagged_arrays(rf'config_process.yaml', variables)
 flagged_df = merge_flags(trimmed, flag_arrays)
 flagged_df = pd.DataFrame(flagged_df)
 

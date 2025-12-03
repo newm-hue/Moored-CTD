@@ -8,7 +8,7 @@ import os
 
 #yaml directory
 base_dir = os.path.dirname(__file__)
-yaml_path = os.path.join(base_dir, "variable_map.yaml")
+yaml_path = os.path.join(base_dir, "config_process.yaml")
 
 
 #Load in variable map with trim start and finish indices
